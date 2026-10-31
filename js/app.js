@@ -4,12 +4,12 @@
 function setupData() {
   if (!localStorage.getItem('cars')) {
     const defaultCars = [
-      { id: 'EV01', name: 'Nissan Leaf', range: 270, rate: 55, img: '../images/nissan_leaf.jpeg' },
-      { id: 'EV02', name: 'Tesla Model 3', range: 500, rate: 90, img: '../images/tesla_m3.jpeg' },
-      { id: 'EV03', name: 'BYD Atto 3', range: 420, rate: 70, img: '../images/byd_atto3.jpeg' },
-      { id: 'EV04', name: 'MG ZS EV', range: 320, rate: 60, img: '../images/mg_zs_ev.jpeg' },
-      { id: 'EV05', name: 'Hyundai Ioniq 5', range: 480, rate: 85, img: '../images/hyundai_ioniq.jpeg' },
-      { id: 'EV06', name: 'Kia EV6', range: 510, rate: 95, img: '../images/Kia_EV6.jpeg' }
+      { id: 'EV01', name: 'Nissan Leaf', range: 270, rate: 55, img: 'images/nissan_leaf.jpeg' },
+      { id: 'EV02', name: 'Tesla Model 3', range: 500, rate: 90, img: 'images/tesla_m3.jpeg' },
+      { id: 'EV03', name: 'BYD Atto 3', range: 420, rate: 70, img: 'images/byd_atto3.jpeg' },
+      { id: 'EV04', name: 'MG ZS EV', range: 320, rate: 60, img: 'images/mg_zs_ev.jpeg' },
+      { id: 'EV05', name: 'Hyundai Ioniq 5', range: 480, rate: 85, img: 'images/hyundai_ioniq.jpeg' },
+      { id: 'EV06', name: 'Kia EV6', range: 510, rate: 95, img: 'images/Kia_EV6.jpeg' }
     ];
     localStorage.setItem('cars', JSON.stringify(defaultCars));
   }
