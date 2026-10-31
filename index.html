@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>AZoom Car Rental — Electric, Everyday</title>
+<link rel="stylesheet" href="css/style.css">
+<script src="js/app.js" defer></script>
+
+<style>
+  /* Hero with image: text left, image right; stacks on mobile */
+  .hero.hero-split {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2.5rem;
+    text-align: left;
+    background: linear-gradient(135deg, #eaf5ee 0%, #d8ecdf 100%);
+    padding: 3.5rem 2rem;
+    border-radius: 16px;
+    margin-bottom: 1.5rem;
+  }
+  .hero-split .hero-text { flex: 1 1 52%; min-width: 0; }
+  .hero-split .hero-actions { justify-content: flex-start; margin-top: 1.5rem; }
+  .hero-split .hero-image { flex: 1 1 40%; display: flex; justify-content: center; }
+  .hero-split .hero-image img {
+    width: 100%;
+    max-width: 380px;
+    height: auto;
+    border-radius: 24px;
+    background: #fff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .15);
+    padding: 2rem;
+  }
+  @media (max-width: 760px) {
+    .hero.hero-split { flex-direction: column-reverse; text-align: center; gap: 1.5rem; padding: 2rem 1rem; }
+    .hero-split .hero-actions { justify-content: center; }
+    .hero-split .hero-image img { max-width: 240px; }
+  }
+</style>
+</head>
+<body>
+    
+<!-- ============================================================
+     HEADER / NAV
+     ============================================================ -->
+<header>
+  <h1><span>⚡</span> AZoom Car Rental</h1>
+  <nav id="mainNav">
+    <a data-nav="home" onclick="showPage('home')" class="active">Home</a>
+    <a data-nav="cars" onclick="showPage('cars')">Cars</a>
+    <a data-nav="booking" onclick="showPage('booking')">Book</a>
+    <a data-nav="login" id="navLogin" onclick="showPage('login')">Login</a>
+    <a data-nav="employee" id="navEmployee" style="display:none" onclick="showPage('employee')">Employee</a>
+    <span class="badge-user" id="navUser" style="display:none"></span>
+    <a id="navLogout" style="display:none" onclick="logout()">Logout</a>
+  </nav>
+</header>
+
+<main>
+
+<!-- PAGE: HOME -->
+<section id="page-home" class="page active">
+  <div class="hero hero-split">
+    <div class="hero-text">
+      <h1>Drive Electric. Drive Green.</h1>
+      <p>
+        Rent an EV daily, weekly or monthly — pick up at our City Centre or
+        Riverside branch and return to a designated car park. All reservations
+        are made online with a credit card.
+      </p>
+      <div class="row hero-actions">
+        <button class="btn" onclick="showPage('cars')">Browse Cars</button>
+        <button class="btn secondary" onclick="showPage('booking')">Book Now</button>
+      </div>
+    </div>
+    <div class="hero-image">
+      <img src="../images/hero.jpg" width="612" height="612" alt="EV Logo">
+    </div>
+  </div>
+
+  <h2 class="section-title">Choose Your Plan</h2>
+  <div class="cards">
+    <div class="car-card">
+      <h3>Daily</h3>
+      <p>Perfect for a quick city trip or a one-day errand.</p>
+      <p class="price">from $55 / day</p>
+      <button class="btn" onclick="showPage('booking')">Reserve Daily</button>
+    </div>
+    <div class="car-card">
+      <h3>Weekly</h3>
+      <p>Save on 7-day rentals — ideal for short holidays.</p>
+      <p class="price">from $350 / week</p>
+      <button class="btn" onclick="showPage('booking')">Reserve Weekly</button>
+    </div>
+    <div class="car-card">
+      <h3>Monthly</h3>
+      <p>Best value for long-term needs and business travel.</p>
+      <p class="price">from $1,200 / month</p>
+      <button class="btn" onclick="showPage('booking')">Reserve Monthly</button>
+    </div>
+  </div>
+
+  <h2 class="section-title">How It Works</h2>
+  <div class="cards">
+    <div class="car-card">
+      <h3>1. Reserve Online</h3>
+      <p>Pick a car, branch and dates. Pay securely with your credit card.</p>
+    </div>
+    <div class="car-card">
+      <h3>2. Pick Up</h3>
+      <p>Collect your electric car at the AZoom branch you selected.</p>
+    </div>
+    <div class="car-card">
+      <h3>3. Return</h3>
+      <p>Drop it at a designated car park. Our staff inspect it for damages.</p>
+    </div>
+    <div class="car-card">
+      <h3>4. Final Bill</h3>
+      <p>Pay the final bill (rental + any damages) by credit card.</p>
+    </div>
+  </div>
+
+  <div class="info-box">
+    <strong>Why electric?</strong> Zero tailpipe emissions, lower running
+    costs, and a quieter drive. Join our environmental-conscious customers today.
+  </div>
+</section>
+
+<!-- PAGE: CARS -->
+<section id="page-cars" class="page">
+  <h2 class="section-title">Our Electric Fleet</h2>
+
+  <div class="center mb1">
+    <label style="display:inline-block; font-weight:600">
+      Max daily rate:
+      <input type="range" id="maxRate" min="50" max="100" value="100"
+             oninput="showCars()" style="vertical-align:middle; width:180px">
+      <span id="rateLabel" style="color:#145c39; font-weight:700">$100</span>
+    </label>
+  </div>
+
+  <div class="cards" id="carGrid"></div>
+</section>
+
+<!-- PAGE: BOOKING -->
+<section id="page-booking" class="page">
+  <form class="box" id="bookingForm" onsubmit="return submitBooking(event)">
+    <h2>Reserve Your Electric Car</h2>
+    <p class="subtitle">All bookings require a credit card. Payment is taken online.</p>
+
+    <label for="car">Car</label>
+    <select id="car" required onchange="calculateCost()"></select>
+
+    <div class="field-row">
+      <div>
+        <label for="branch">Pickup Branch</label>
+        <select id="branch" required>
+          <option value="Orchard">Orchard Branch</option>
+          <option value="Dhoby-Ghaut">Dhoby Ghaut Branch</option>
+        </select>
+      </div>
+      <div>
+        <label for="returnPark">Return Car Park</label>
+        <select id="returnPark" required>
+          <option value="Orchard Car Park">Orchard Car Park</option>
+          <option value="Dhoby-Ghaut Car Park">Dhoby Ghaut Car Park</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="field-row">
+      <div>
+        <label for="pickup">Pickup Date</label>
+        <input type="date" id="pickup" required onchange="calculateCost()">
+      </div>
+      <div>
+        <label for="ret">Return Date</label>
+        <input type="date" id="ret" required onchange="calculateCost()">
+      </div>
+    </div>
+
+    <label for="plan">Rental Plan</label>
+    <select id="plan" onchange="calculateCost()">
+      <option value="daily">Daily</option>
+      <option value="weekly">Weekly (7-day blocks)</option>
+      <option value="monthly">Monthly (30-day blocks)</option>
+    </select>
+
+    <p id="dateError" class="error">Return date must be after pickup date.</p>
+
+    <div class="info-box" style="margin-top:1rem; font-size:1.05rem">
+      Estimated rental cost: <strong id="cost" style="color:#145c39; font-size:1.2rem">$0.00</strong>
+      <span id="daysInfo" class="muted" style="font-size:.88rem"></span>
+    </div>
+
+    <h3 style="margin-top:1.4rem; color:#145c39">Payment — Credit Card Only</h3>
+
+    <label for="cardName">Name on Card</label>
+    <input id="cardName" required autocomplete="cc-name">
+
+    <label for="cardNum">Card Number</label>
+    <input id="cardNum" maxlength="19" placeholder="1234 5678 9012 3456"
+           required autocomplete="cc-number" inputmode="numeric">
+    <p id="cardErr" class="error">Invalid card number.</p>
+
+    <div class="field-row">
+      <div>
+        <label for="expiry">Expiry (MM/YY)</label>
+        <input id="expiry" maxlength="5" placeholder="09/27" required autocomplete="cc-exp">
+      </div>
+      <div>
+        <label for="cvc">CVC</label>
+        <input id="cvc" maxlength="4" required autocomplete="cc-csc" inputmode="numeric">
+      </div>
+    </div>
+    <p id="expiryErr" class="error">Invalid expiry or CVC.</p>
+
+    <button type="submit" class="btn" style="margin-top:1.3rem; width:100%">
+      Confirm Reservation
+    </button>
+    <p class="muted center" style="margin-top:.7rem; font-size:.85rem">
+      You must be logged in as a customer to complete a booking.
+    </p>
+  </form>
+</section>
+
+<!-- PAGE: CONFIRMATION -->
+<section id="page-confirmation" class="page">
+  <div class="box" style="max-width:640px">
+    <h2 style="color:#145c39">✅ Reservation Confirmed</h2>
+    <p class="subtitle">Please keep your booking reference. Show it at the branch.</p>
+
+    <table class="summary-table">
+      <tbody id="confirmBody"></tbody>
+    </table>
+
+    <div class="info-box">
+      Payment has been authorised. Your final bill (including any damages)
+      will be issued when you return the car.
+    </div>
+
+    <div class="row mt1">
+      <button class="btn" onclick="showPage('home')">Back to Home</button>
+      <button class="btn secondary" onclick="showPage('cars')">Browse More Cars</button>
+    </div>
+  </div>
+</section>
+
+<!-- PAGE: LOGIN -->
+<section id="page-login" class="page">
+  <form class="box" onsubmit="return handleLogin(event)">
+    <h2>Login</h2>
+    <p class="subtitle">Enter your credentials.</p>
+
+    <label for="loginEmail">Email</label>
+    <input type="email" id="loginEmail" required autocomplete="username">
+
+    <label for="loginPass">Password</label>
+    <input type="password" id="loginPass" required autocomplete="current-password">
+
+    <p id="loginErr" class="error">Invalid email or password.</p>
+
+    <button type="submit" class="btn" style="margin-top:1.1rem; width:100%">Log In</button>
+
+    <p class="center" style="margin-top:1rem">
+      New customer? <a href="#" onclick="showPage('register'); return false;"
+         style="color:#1e7d4f; font-weight:600">Create an account</a>
+    </p>
+
+    <div class="info-box mt1" style="font-size:.85rem">
+      <strong>Demo accounts:</strong><br>
+      Employee → <code>emp1@azoom.com</code> / <code>azoom123</code><br>
+      Customer → register a new account first
+    </div>
+  </form>
+</section>
+
+<!-- PAGE: REGISTER -->
+<section id="page-register" class="page">
+  <form class="box" onsubmit="return handleRegister(event)">
+    <h2>Create Account</h2>
+    <p class="subtitle">Register to make reservations online.</p>
+
+    <label for="regName">Full Name</label>
+    <input id="regName" required>
+
+    <label for="regEmail">Email</label>
+    <input type="email" id="regEmail" required>
+
+    <label for="regPass">Password (min 6 characters)</label>
+    <input type="password" id="regPass" required>
+
+    <button type="submit" class="btn" style="margin-top:1.1rem; width:100%">Register</button>
+
+    <p class="center" style="margin-top:1rem">
+      Already have an account?
+      <a href="#" onclick="showPage('login'); return false;"
+         style="color:#1e7d4f; font-weight:600">Log in</a>
+    </p>
+  </form>
+</section>
+
+<!-- PAGE: EMPLOYEE DASHBOARD -->
+<section id="page-employee" class="page">
+  <h2 class="section-title">Employee Dashboard</h2>
+
+  <div class="box" style="max-width:900px">
+    <h3 style="color:#145c39">All Bookings</h3>
+    <p class="subtitle">Click "Inspect" to record a returned car.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Ref</th><th>Customer</th><th>Car</th><th>Status</th><th>Action</th>
+        </tr>
+      </thead>
+      <tbody id="empBookingRows"></tbody>
+    </table>
+
+    <p id="empEmpty" class="muted center hidden">No bookings yet.</p>
+  </div>
+
+  <!-- INSPECTION FORM -->
+  <div class="box hidden" id="inspectionBox" style="max-width:900px; border-color: #1e7d4f;">
+    <h3 style="color:#145c39">Record Inspection & Damages</h3>
+    <p class="subtitle">Entering damages for booking: <strong id="inspectRefLabel"></strong></p>
+    
+    <label for="damageType">Damage Severity</label>
+    <select id="damageType" onchange="toggleCustomDamage()">
+      <option value="0">No Damage</option>
+      <option value="150">Minor Damage ($150)</option>
+      <option value="450">Moderate Damage ($450)</option>
+      <option value="1200">Extensive Damage ($1,200)</option>
+      <option value="custom">Custom Amount...</option>
+    </select>
+
+    <div id="customDamageContainer" class="hidden" style="margin-top: 1rem;">
+      <label for="damageInput">Enter Custom Damage Cost ($)</label>
+      <input type="number" id="damageInput" min="0" step="0.01" value="0">
+    </div>
+    
+    <button class="btn" onclick="saveInspection()" style="margin-top:1.2rem">Submit Inspection</button>
+    <button class="btn secondary" onclick="cancelInspection()" style="margin-top:1.2rem; margin-left: 10px;">Cancel</button>
+  </div>
+</section>
+
+<!-- PAGE: FINAL BILL -->
+<section id="page-finalbill" class="page">
+  <form class="box" style="max-width:640px" onsubmit="return payFinalBill(event)">
+    <h2 style="color:#145c39">Final Bill</h2>
+    <p class="subtitle">Pay the rental cost plus any damage charges by credit card.</p>
+
+    <table class="summary-table">
+      <tbody id="billBody"></tbody>
+    </table>
+
+    <h3 style="margin-top:1.2rem; color:#145c39">Pay by Credit Card</h3>
+
+    <label for="payName">Name on Card</label>
+    <input id="payName" required autocomplete="cc-name">
+
+    <label for="payNum">Card Number</label>
+    <input id="payNum" maxlength="19" required placeholder="1234 5678 9012 3456"
+           inputmode="numeric" autocomplete="cc-number">
+
+    <div class="field-row">
+      <div>
+        <label for="payExp">Expiry (MM/YY)</label>
+        <input id="payExp" maxlength="5" required placeholder="09/27" autocomplete="cc-exp">
+      </div>
+      <div>
+        <label for="payCvc">CVC</label>
+        <input id="payCvc" maxlength="4" required inputmode="numeric" autocomplete="cc-csc">
+      </div>
+    </div>
+    <p id="payErr" class="error">Invalid card details.</p>
+
+    <button type="submit" class="btn" style="margin-top:1.1rem; width:100%">Pay Now</button>
+    <p class="center muted" style="font-size:.85rem; margin-top:.6rem">
+      Demonstration only — no real payment is processed.
+    </p>
+  </form>
+</section>
+
+</main>
+
+<footer>© 2025 AZoom Car Rental — All electric, all the way.</footer>
+</body>
+</html>
