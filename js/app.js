@@ -120,7 +120,7 @@ function showCars() {
         <div class="car-card">
           <img src="${car.img}" alt="${car.name}">
           <h3>${car.name}</h3>
-          <p>⚡ Range: ${car.range} km</p>
+          <p>Range: ${car.range} km</p>
           <p class="price">$${car.rate} / day</p>
           <button class="btn" onclick="bookCar('${car.id}')">Reserve</button>
         </div>
